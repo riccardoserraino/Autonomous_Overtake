@@ -1,0 +1,10 @@
+{
+  "name": "webdrivesim-web",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "WebDriveSim browser simulator (three.js) — bundled into one HTML file",
+  "scripts": { "build": "node build.mjs" },
+  "dependencies": { "three": "0.160.0" },
+  "devDependencies": { "esbuild": "0.20.2" }
+}

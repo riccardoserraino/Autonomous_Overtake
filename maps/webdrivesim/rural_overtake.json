@@ -1,0 +1,896 @@
+{
+  "format": "webdrivesim_scenario",
+  "version": 2,
+  "name": "rural_overtake",
+  "created": "2026-11-11T16:36:39.376Z",
+  "vehicle": {
+    "blueprint": "sedan",
+    "name": "Mid-size sedan",
+    "paint": "#2563eb",
+    "model": "kinematic_bicycle",
+    "dimensions_m": {
+      "length": 4.78,
+      "width": 1.84,
+      "height": 1.44,
+      "wheelbase": 2.84,
+      "track": 1.58
+    },
+    "mass_kg": 1520,
+    "cog_height_m": 0.55,
+    "lf_m": 1.18,
+    "lr_m": 1.66,
+    "max_accel_mps2": 2.9,
+    "max_decel_mps2": 9,
+    "max_steer_rad": 0.6,
+    "actuators": {
+      "steer_tau_s": 0.12,
+      "steer_rate_rad_s": 0.7,
+      "accel_tau_s": 0.35
+    }
+  },
+  "sensors": [
+    {
+      "id": "radar_front",
+      "type": "radar",
+      "frame_id": "ego_vehicle/radar_front",
+      "topic": "/carla/ego_vehicle/radar_front",
+      "rate_hz": 20,
+      "x": 2.3400000000000003,
+      "y": 0,
+      "z": 0.5,
+      "yaw_deg": 0,
+      "range_m": 250,
+      "hfov_deg": 18,
+      "noise_sigma": {
+        "range_m": 0.25,
+        "azimuth_deg": 0.3,
+        "range_rate_mps": 0.15
+      }
+    },
+    {
+      "id": "rgb_front",
+      "type": "camera",
+      "frame_id": "ego_vehicle/rgb_front",
+      "topic": "/carla/ego_vehicle/rgb_front",
+      "rate_hz": 15,
+      "x": 0.4900000000000002,
+      "y": 0,
+      "z": 1.3399999999999999,
+      "yaw_deg": 0,
+      "range_m": 120,
+      "hfov_deg": 60,
+      "noise_sigma": {
+        "range_m": 1,
+        "azimuth_deg": 0.15,
+        "range_rate_mps": 0.6
+      }
+    },
+    {
+      "id": "radar_rear_left",
+      "type": "radar",
+      "frame_id": "ego_vehicle/radar_rear_left",
+      "topic": "/carla/ego_vehicle/radar_rear_left",
+      "rate_hz": 20,
+      "x": -2.29,
+      "y": 0.8,
+      "z": 0.5,
+      "yaw_deg": 145,
+      "range_m": 80,
+      "hfov_deg": 110,
+      "noise_sigma": {
+        "range_m": 0.3,
+        "azimuth_deg": 0.8,
+        "range_rate_mps": 0.2
+      }
+    },
+    {
+      "id": "radar_rear_right",
+      "type": "radar",
+      "frame_id": "ego_vehicle/radar_rear_right",
+      "topic": "/carla/ego_vehicle/radar_rear_right",
+      "rate_hz": 20,
+      "x": -2.29,
+      "y": -0.8,
+      "z": 0.5,
+      "yaw_deg": -145,
+      "range_m": 80,
+      "hfov_deg": 110,
+      "noise_sigma": {
+        "range_m": 0.3,
+        "azimuth_deg": 0.8,
+        "range_rate_mps": 0.2
+      }
+    },
+    {
+      "id": "gnss",
+      "type": "gnss",
+      "frame_id": "ego_vehicle/gnss",
+      "topic": "/carla/ego_vehicle/gnss",
+      "rate_hz": 10,
+      "x": 0,
+      "y": 0,
+      "z": 1.44,
+      "yaw_deg": 0,
+      "noise_sigma": {
+        "position_m": 1.5
+      }
+    },
+    {
+      "id": "imu",
+      "type": "imu",
+      "frame_id": "ego_vehicle/imu",
+      "topic": "/carla/ego_vehicle/imu",
+      "rate_hz": 50,
+      "x": 0,
+      "y": 0,
+      "z": 0.45,
+      "yaw_deg": 0,
+      "noise_sigma": {
+        "accel_mps2": 0.05,
+        "yaw_rate_rad_s": 0.004
+      }
+    }
+  ],
+  "noise_level": "L1",
+  "road": {
+    "length_m": 8396.96,
+    "closed": false,
+    "lanes": {
+      "our_direction": 1,
+      "oncoming": 1,
+      "width_m": 3.5
+    },
+    "speed_limit_kmh": 90,
+    "center_line": "auto",
+    "surface": "dry",
+    "opendrive": "road.xodr",
+    "segments": [
+      {
+        "type": "straight",
+        "length": 900,
+        "radius": 500,
+        "radius2": 150,
+        "angle": 45,
+        "dir": "right",
+        "transition": 80,
+        "dz": 0,
+        "feature": "none",
+        "limit": 0,
+        "noOvertake": false
+      },
+      {
+        "type": "straight",
+        "length": 450,
+        "radius": 500,
+        "radius2": 150,
+        "angle": 45,
+        "dir": "right",
+        "transition": 80,
+        "dz": 9,
+        "feature": "none",
+        "limit": 0,
+        "noOvertake": false
+      },
+      {
+        "type": "straight",
+        "length": 450,
+        "radius": 500,
+        "radius2": 150,
+        "angle": 45,
+        "dir": "right",
+        "transition": 80,
+        "dz": -9,
+        "feature": "none",
+        "limit": 0,
+        "noOvertake": false
+      },
+      {
+        "type": "scurve",
+        "length": 600,
+        "radius": 300,
+        "radius2": 150,
+        "angle": 30,
+        "dir": "left",
+        "transition": 70,
+        "dz": 0,
+        "feature": "none",
+        "limit": 0,
+        "noOvertake": false
+      },
+      {
+        "type": "straight",
+        "length": 1000,
+        "radius": 500,
+        "radius2": 150,
+        "angle": 45,
+        "dir": "right",
+        "transition": 80,
+        "dz": 0,
+        "feature": "overpass",
+        "limit": 0,
+        "noOvertake": false
+      },
+      {
+        "type": "curve",
+        "length": 600,
+        "radius": 350,
+        "radius2": 150,
+        "angle": 50,
+        "dir": "right",
+        "transition": 80,
+        "dz": 5,
+        "feature": "none",
+        "limit": 0,
+        "noOvertake": false
+      },
+      {
+        "type": "straight",
+        "length": 500,
+        "radius": 500,
+        "radius2": 150,
+        "angle": 45,
+        "dir": "right",
+        "transition": 80,
+        "dz": -3,
+        "feature": "bridge",
+        "limit": 0,
+        "noOvertake": false
+      },
+      {
+        "type": "straight",
+        "length": 700,
+        "radius": 500,
+        "radius2": 150,
+        "angle": 45,
+        "dir": "right",
+        "transition": 80,
+        "dz": 7,
+        "feature": "none",
+        "limit": 0,
+        "noOvertake": false
+      },
+      {
+        "type": "straight",
+        "length": 400,
+        "radius": 500,
+        "radius2": 150,
+        "angle": 45,
+        "dir": "right",
+        "transition": 80,
+        "dz": -7,
+        "feature": "none",
+        "limit": 0,
+        "noOvertake": false
+      },
+      {
+        "type": "tighten",
+        "length": 600,
+        "radius": 400,
+        "radius2": 160,
+        "angle": 75,
+        "dir": "left",
+        "transition": 80,
+        "dz": 0,
+        "feature": "none",
+        "limit": 70,
+        "noOvertake": false
+      },
+      {
+        "type": "straight",
+        "length": 800,
+        "radius": 500,
+        "radius2": 150,
+        "angle": 45,
+        "dir": "right",
+        "transition": 80,
+        "dz": 0,
+        "feature": "none",
+        "limit": 0,
+        "noOvertake": false
+      },
+      {
+        "type": "hairpin",
+        "length": 600,
+        "radius": 45,
+        "radius2": 150,
+        "angle": 45,
+        "dir": "right",
+        "transition": 25,
+        "dz": 0,
+        "feature": "none",
+        "limit": 40,
+        "noOvertake": false
+      },
+      {
+        "type": "straight",
+        "length": 600,
+        "radius": 500,
+        "radius2": 150,
+        "angle": 45,
+        "dir": "right",
+        "transition": 80,
+        "dz": 10,
+        "feature": "none",
+        "limit": 0,
+        "noOvertake": false
+      },
+      {
+        "type": "curve",
+        "length": 600,
+        "radius": 500,
+        "radius2": 150,
+        "angle": 30,
+        "dir": "left",
+        "transition": 90,
+        "dz": 0,
+        "feature": "none",
+        "limit": 0,
+        "noOvertake": false
+      },
+      {
+        "type": "straight",
+        "length": 900,
+        "radius": 500,
+        "radius2": 150,
+        "angle": 45,
+        "dir": "right",
+        "transition": 80,
+        "dz": 0,
+        "feature": "none",
+        "limit": 0,
+        "noOvertake": false
+      }
+    ],
+    "features": [
+      {
+        "type": "overpass",
+        "s_start_m": 2254.2,
+        "s_end_m": 3254.2
+      },
+      {
+        "type": "bridge",
+        "s_start_m": 3639.6,
+        "s_end_m": 4139.6
+      }
+    ]
+  },
+  "environment": {
+    "style": "toy",
+    "time": "day",
+    "fog": false
+  },
+  "ego_start": {
+    "lane": "Driving lane",
+    "lane_index": 1,
+    "s_m": 60,
+    "speed_kmh": 80
+  },
+  "traffic": {
+    "seed": 42,
+    "model": "IDM",
+    "vehicles": [
+      {
+        "id": 1,
+        "type": "truck",
+        "direction": "same",
+        "lane": "Driving lane",
+        "lane_index": 1,
+        "s_m": 170,
+        "speed_kmh": 60,
+        "behaviour": "idm"
+      },
+      {
+        "id": 2,
+        "type": "sedan",
+        "direction": "oncoming",
+        "lane": "Oncoming lane",
+        "lane_index": -1,
+        "s_m": 580,
+        "speed_kmh": 85,
+        "behaviour": "idm"
+      },
+      {
+        "id": 3,
+        "type": "van",
+        "direction": "oncoming",
+        "lane": "Oncoming lane",
+        "lane_index": -1,
+        "s_m": 1210,
+        "speed_kmh": 80,
+        "behaviour": "idm"
+      },
+      {
+        "id": 4,
+        "type": "sedan",
+        "direction": "same",
+        "lane": "Driving lane",
+        "lane_index": 1,
+        "s_m": 1474.4,
+        "speed_kmh": 78.2,
+        "behaviour": "idm"
+      },
+      {
+        "id": 5,
+        "type": "hatch",
+        "direction": "same",
+        "lane": "Driving lane",
+        "lane_index": 1,
+        "s_m": 3966.6,
+        "speed_kmh": 96.5,
+        "behaviour": "idm"
+      },
+      {
+        "id": 6,
+        "type": "sedan",
+        "direction": "same",
+        "lane": "Driving lane",
+        "lane_index": 1,
+        "s_m": 1662.4,
+        "speed_kmh": 90.6,
+        "behaviour": "idm"
+      },
+      {
+        "id": 7,
+        "type": "suv",
+        "direction": "same",
+        "lane": "Driving lane",
+        "lane_index": 1,
+        "s_m": 439,
+        "speed_kmh": 70.9,
+        "behaviour": "idm"
+      },
+      {
+        "id": 8,
+        "type": "van",
+        "direction": "oncoming",
+        "lane": "Oncoming lane",
+        "lane_index": -1,
+        "s_m": 1565.5,
+        "speed_kmh": 85.9,
+        "behaviour": "idm"
+      },
+      {
+        "id": 9,
+        "type": "sedan",
+        "direction": "oncoming",
+        "lane": "Oncoming lane",
+        "lane_index": -1,
+        "s_m": 7069.2,
+        "speed_kmh": 94.3,
+        "behaviour": "idm"
+      },
+      {
+        "id": 10,
+        "type": "hatch",
+        "direction": "oncoming",
+        "lane": "Oncoming lane",
+        "lane_index": -1,
+        "s_m": 323.6,
+        "speed_kmh": 86.7,
+        "behaviour": "idm"
+      },
+      {
+        "id": 11,
+        "type": "hatch",
+        "direction": "oncoming",
+        "lane": "Oncoming lane",
+        "lane_index": -1,
+        "s_m": 5419,
+        "speed_kmh": 79.1,
+        "behaviour": "idm"
+      },
+      {
+        "id": 12,
+        "type": "hatch",
+        "direction": "oncoming",
+        "lane": "Oncoming lane",
+        "lane_index": -1,
+        "s_m": 4265.5,
+        "speed_kmh": 78.5,
+        "behaviour": "idm"
+      },
+      {
+        "id": 13,
+        "type": "suv",
+        "direction": "oncoming",
+        "lane": "Oncoming lane",
+        "lane_index": -1,
+        "s_m": 5537.6,
+        "speed_kmh": 90.8,
+        "behaviour": "idm"
+      }
+    ]
+  },
+  "editor_state": {
+    "version": 2,
+    "name": "rural_overtake",
+    "vehicle": {
+      "bp": "sedan",
+      "color": "#2563eb"
+    },
+    "sensors": [
+      {
+        "id": "radar_front",
+        "enabled": true,
+        "x": 2.3400000000000003,
+        "y": 0,
+        "z": 0.5,
+        "yaw": 0,
+        "range": 250,
+        "fov": 18,
+        "sr": 0.25,
+        "sa": 0.3,
+        "sv": 0.15
+      },
+      {
+        "id": "rgb_front",
+        "enabled": true,
+        "x": 0.4900000000000002,
+        "y": 0,
+        "z": 1.3399999999999999,
+        "yaw": 0,
+        "range": 120,
+        "fov": 60,
+        "sr": 1,
+        "sa": 0.15,
+        "sv": 0.6,
+        "slat": 0.04
+      },
+      {
+        "id": "lidar",
+        "enabled": false,
+        "x": -0.1,
+        "y": 0,
+        "z": 1.6199999999999999,
+        "yaw": 0,
+        "range": 100,
+        "fov": 360,
+        "sr": 0.03,
+        "sa": 0.1,
+        "sv": 0.4
+      },
+      {
+        "id": "radar_rear_left",
+        "enabled": true,
+        "x": -2.29,
+        "y": 0.8,
+        "z": 0.5,
+        "yaw": 145,
+        "range": 80,
+        "fov": 110,
+        "sr": 0.3,
+        "sa": 0.8,
+        "sv": 0.2
+      },
+      {
+        "id": "radar_rear_right",
+        "enabled": true,
+        "x": -2.29,
+        "y": -0.8,
+        "z": 0.5,
+        "yaw": -145,
+        "range": 80,
+        "fov": 110,
+        "sr": 0.3,
+        "sa": 0.8,
+        "sv": 0.2
+      },
+      {
+        "id": "radar_front_left",
+        "enabled": false,
+        "x": 2.24,
+        "y": 0.77,
+        "z": 0.5,
+        "yaw": 45,
+        "range": 80,
+        "fov": 110,
+        "sr": 0.3,
+        "sa": 0.8,
+        "sv": 0.2
+      },
+      {
+        "id": "gnss",
+        "enabled": true,
+        "x": 0,
+        "y": 0,
+        "z": 1.44,
+        "yaw": 0,
+        "sxy": 1.5
+      },
+      {
+        "id": "imu",
+        "enabled": true,
+        "x": 0,
+        "y": 0,
+        "z": 0.45,
+        "yaw": 0,
+        "sacc": 0.05,
+        "sgyr": 0.004
+      }
+    ],
+    "noise": "L1",
+    "road": {
+      "preset": "rural",
+      "name": "rural",
+      "closed": false,
+      "nRight": 1,
+      "nLeft": 1,
+      "laneWidth": 3.5,
+      "speedLimit": 90,
+      "centerLine": "auto",
+      "segments": [
+        {
+          "type": "straight",
+          "length": 900,
+          "radius": 500,
+          "radius2": 150,
+          "angle": 45,
+          "dir": "right",
+          "transition": 80,
+          "dz": 0,
+          "feature": "none",
+          "limit": 0,
+          "noOvertake": false
+        },
+        {
+          "type": "straight",
+          "length": 450,
+          "radius": 500,
+          "radius2": 150,
+          "angle": 45,
+          "dir": "right",
+          "transition": 80,
+          "dz": 9,
+          "feature": "none",
+          "limit": 0,
+          "noOvertake": false
+        },
+        {
+          "type": "straight",
+          "length": 450,
+          "radius": 500,
+          "radius2": 150,
+          "angle": 45,
+          "dir": "right",
+          "transition": 80,
+          "dz": -9,
+          "feature": "none",
+          "limit": 0,
+          "noOvertake": false
+        },
+        {
+          "type": "scurve",
+          "length": 600,
+          "radius": 300,
+          "radius2": 150,
+          "angle": 30,
+          "dir": "left",
+          "transition": 70,
+          "dz": 0,
+          "feature": "none",
+          "limit": 0,
+          "noOvertake": false
+        },
+        {
+          "type": "straight",
+          "length": 1000,
+          "radius": 500,
+          "radius2": 150,
+          "angle": 45,
+          "dir": "right",
+          "transition": 80,
+          "dz": 0,
+          "feature": "overpass",
+          "limit": 0,
+          "noOvertake": false
+        },
+        {
+          "type": "curve",
+          "length": 600,
+          "radius": 350,
+          "radius2": 150,
+          "angle": 50,
+          "dir": "right",
+          "transition": 80,
+          "dz": 5,
+          "feature": "none",
+          "limit": 0,
+          "noOvertake": false
+        },
+        {
+          "type": "straight",
+          "length": 500,
+          "radius": 500,
+          "radius2": 150,
+          "angle": 45,
+          "dir": "right",
+          "transition": 80,
+          "dz": -3,
+          "feature": "bridge",
+          "limit": 0,
+          "noOvertake": false
+        },
+        {
+          "type": "straight",
+          "length": 700,
+          "radius": 500,
+          "radius2": 150,
+          "angle": 45,
+          "dir": "right",
+          "transition": 80,
+          "dz": 7,
+          "feature": "none",
+          "limit": 0,
+          "noOvertake": false
+        },
+        {
+          "type": "straight",
+          "length": 400,
+          "radius": 500,
+          "radius2": 150,
+          "angle": 45,
+          "dir": "right",
+          "transition": 80,
+          "dz": -7,
+          "feature": "none",
+          "limit": 0,
+          "noOvertake": false
+        },
+        {
+          "type": "tighten",
+          "length": 600,
+          "radius": 400,
+          "radius2": 160,
+          "angle": 75,
+          "dir": "left",
+          "transition": 80,
+          "dz": 0,
+          "feature": "none",
+          "limit": 70,
+          "noOvertake": false
+        },
+        {
+          "type": "straight",
+          "length": 800,
+          "radius": 500,
+          "radius2": 150,
+          "angle": 45,
+          "dir": "right",
+          "transition": 80,
+          "dz": 0,
+          "feature": "none",
+          "limit": 0,
+          "noOvertake": false
+        },
+        {
+          "type": "hairpin",
+          "length": 600,
+          "radius": 45,
+          "radius2": 150,
+          "angle": 45,
+          "dir": "right",
+          "transition": 25,
+          "dz": 0,
+          "feature": "none",
+          "limit": 40,
+          "noOvertake": false
+        },
+        {
+          "type": "straight",
+          "length": 600,
+          "radius": 500,
+          "radius2": 150,
+          "angle": 45,
+          "dir": "right",
+          "transition": 80,
+          "dz": 10,
+          "feature": "none",
+          "limit": 0,
+          "noOvertake": false
+        },
+        {
+          "type": "curve",
+          "length": 600,
+          "radius": 500,
+          "radius2": 150,
+          "angle": 30,
+          "dir": "left",
+          "transition": 90,
+          "dz": 0,
+          "feature": "none",
+          "limit": 0,
+          "noOvertake": false
+        },
+        {
+          "type": "straight",
+          "length": 900,
+          "radius": 500,
+          "radius2": 150,
+          "angle": 45,
+          "dir": "right",
+          "transition": 80,
+          "dz": 0,
+          "feature": "none",
+          "limit": 0,
+          "noOvertake": false
+        }
+      ],
+      "wet": false,
+      "rails": true,
+      "scenery": true
+    },
+    "env": {
+      "style": "toy",
+      "time": "day",
+      "fog": false
+    },
+    "ego": {
+      "lane": 1,
+      "s": 60,
+      "speed": 80
+    },
+    "traffic": {
+      "vehicles": [
+        {
+          "type": "truck",
+          "lane": 1,
+          "ds": 110,
+          "speed": 60,
+          "behaviour": "idm"
+        },
+        {
+          "type": "sedan",
+          "lane": -1,
+          "ds": 520,
+          "speed": 85,
+          "behaviour": "idm"
+        },
+        {
+          "type": "van",
+          "lane": -1,
+          "ds": 1150,
+          "speed": 80,
+          "behaviour": "idm"
+        }
+      ],
+      "nSame": 4,
+      "nOncoming": 6,
+      "mix": {
+        "hatch": 25,
+        "sedan": 30,
+        "suv": 20,
+        "van": 10,
+        "truck": 15
+      },
+      "vMin": 70,
+      "vMax": 100,
+      "behaviour": "idm",
+      "laneChanges": true,
+      "seed": 42
+    },
+    "drive": {
+      "mode": "ros",
+      "setSpeed": 90,
+      "timeGap": 1.6,
+      "allowOvertake": true,
+      "allowOncoming": true,
+      "policy": "normal"
+    },
+    "ros": {
+      "url": "ws://localhost:9090",
+      "camera": true,
+      "sync": false,
+      "auto": true
+    },
+    "view": {
+      "fov": true,
+      "det": true,
+      "lidar": true,
+      "tracks": true,
+      "path": true,
+      "pip": true,
+      "plots": true,
+      "help": true
+    }
+  }
+}

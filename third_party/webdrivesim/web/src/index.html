@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<title>WebDriveSim · lightweight 3D driving simulator for ROS 2</title>
+<style>
+:root{--bg:#0e1014;--panel:#151820;--panel2:#1b1f29;--line:#262b36;--text:#e6e8ec;--muted:#9aa3b2;--dim:#6b7383;--acc:#4f8cff;--acc2:#2f6fe0;--good:#3fb950;--warn:#e3a33b;--bad:#f85149;--r:8px}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,sans-serif;overflow:hidden}
+button,input,select{font:inherit;color:inherit}
+#app{display:grid;grid-template-columns:392px 1fr;grid-template-rows:54px 1fr;height:100vh}
+header{grid-column:1/3;display:flex;align-items:center;gap:18px;padding:0 16px;background:var(--panel);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;letter-spacing:.2px;white-space:nowrap}
+.brand .logo{width:26px;height:26px;border-radius:6px;background:linear-gradient(135deg,#4f8cff,#1fb6a6);display:grid;place-items:center;font-size:12px;font-weight:700;color:#fff}
+.brand small{color:var(--muted);font-weight:400}
+.steps{display:flex;gap:4px;flex:1;justify-content:center;min-width:0}
+.step{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;border:1px solid transparent;background:none;cursor:pointer;color:var(--muted);white-space:nowrap}
+.step .n{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line);font-size:12px}
+.step.on{color:var(--text);background:var(--panel2);border-color:var(--line)}
+.step.on .n{background:var(--acc);border-color:var(--acc);color:#fff}
+.step.done .n{background:#1f3a2a;border-color:#2e6b44;color:#7ee2a0}
+.step:hover{color:var(--text)}
+.hright{display:flex;gap:8px;align-items:center}
+.btn{background:var(--panel2);border:1px solid var(--line);border-radius:var(--r);padding:7px 12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn:hover{border-color:#3a4252;background:#202533}
+.btn.pri{background:var(--acc2);border-color:var(--acc2);color:#fff}
+.btn.pri:hover{background:var(--acc)}
+.btn.sm{padding:4px 9px;font-size:13px}
+.btn.on{border-color:var(--acc);color:#cfe0ff;background:#1a2640}
+select{background:var(--panel2);border:1px solid var(--line);border-radius:var(--r);padding:6px 8px}
+aside{background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+#stepBody{flex:1;overflow:auto;padding:18px 18px 8px}
+#stepBody h2{font-size:18px;font-weight:600;margin:0 0 4px}
+#stepBody .sub{color:var(--muted);margin:0 0 16px;font-size:13px}
+.sec{margin:18px 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--dim)}
+aside footer{display:flex;justify-content:space-between;gap:8px;padding:12px 18px;border-top:1px solid var(--line)}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card{border:1px solid var(--line);border-radius:10px;background:var(--panel2);padding:8px;cursor:pointer;text-align:left}
+.card:hover{border-color:#3a4252}
+.card.on{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc) inset}
+.card img{width:100%;aspect-ratio:26/15;object-fit:cover;border-radius:6px;background:#0b0d11;display:block}
+.card .t{font-weight:600;margin-top:6px;font-size:13px}
+.card .m{color:var(--muted);font-size:12px}
+.swatches{display:flex;flex-wrap:wrap;gap:8px}
+.sw{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);cursor:pointer}
+.sw.on{border-color:#fff;box-shadow:0 0 0 2px var(--acc)}
+.specs{width:100%;border-collapse:collapse;font-size:13px}
+.specs td{padding:5px 0;border-bottom:1px solid #1f2430}
+.specs td:last-child{text-align:right;font-variant-numeric:tabular-nums;color:#cfd5df}
+.note{font-size:12px;color:var(--muted);background:#121620;border:1px solid var(--line);border-radius:var(--r);padding:8px 10px;margin-top:10px}
+.seg{display:flex;background:var(--panel2);border:1px solid var(--line);border-radius:var(--r);padding:2px;gap:2px;flex-wrap:wrap}
+.seg button{flex:1;border:0;background:none;padding:6px 8px;border-radius:6px;cursor:pointer;color:var(--muted);white-space:nowrap}
+.seg button.on{background:#26324a;color:#fff}
+.row{display:flex;align-items:center;gap:10px;margin:8px 0}
+.row label{flex:1;color:#cfd5df}
+.row .val{min-width:64px;text-align:right;font-variant-numeric:tabular-nums;color:var(--muted);font-size:13px}
+input[type=range]{flex:1.4;accent-color:var(--acc)}
+input[type=number],input[type=text]{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:5px 8px;width:90px}
+.switch,.row label.switch{position:relative;width:36px;height:20px;flex:none}
+.switch input{opacity:0;width:0;height:0}
+.switch span{position:absolute;inset:0;background:#2a3040;border-radius:20px;cursor:pointer;transition:.15s}
+.switch span:before{content:"";position:absolute;width:14px;height:14px;left:3px;top:3px;background:#cfd5df;border-radius:50%;transition:.15s}
+.switch input:checked+span{background:var(--acc2)}
+.switch input:checked+span:before{transform:translateX(16px);background:#fff}
+.sens{border:1px solid var(--line);border-radius:10px;margin:8px 0;background:var(--panel2)}
+.sens .hd{display:flex;align-items:center;gap:10px;padding:9px 10px;cursor:pointer}
+.sens .dot{width:10px;height:10px;border-radius:50%;flex:none}
+.sens .nm{flex:1}
+.sens .nm small{display:block;color:var(--dim);font-size:11.5px}
+.sens .bd{padding:4px 12px 10px;border-top:1px solid var(--line)}
+.sens.sel{border-color:var(--acc)}
+.stepper{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.stepper button{background:var(--panel2);border:0;width:32px;height:30px;cursor:pointer;font-size:16px}
+.stepper span{min-width:34px;text-align:center;font-variant-numeric:tabular-nums}
+.map{width:100%;height:84px;display:block;background:#11141b;border-radius:8px}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:5px 10px;white-space:nowrap}
+.pill .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.vtable{display:flex;flex-direction:column;gap:6px}
+.vrow{display:grid;grid-template-columns:78px 1fr 58px 52px 66px 26px;gap:4px;align-items:center;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:5px}
+.vrow select,.vrow input{font-size:12px;padding:3px 4px;width:100%;min-width:0}
+.vrow.vhead{background:none;border:0;padding:0 5px;font-size:11px;color:var(--dim)}
+.vrow input[type=number]{width:100%}
+details.topics{margin-top:8px;border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:var(--panel2)}
+details.topics summary{cursor:pointer;color:#cfd5df}
+.tp{display:flex;flex-direction:column;padding:5px 0;border-bottom:1px solid #1f2430;font-size:12px}
+.tp code{color:#9cc2ff;font-size:12px;word-break:break-all}.tp span{color:var(--muted)}.tp small{color:var(--dim)}
+code{font:12px ui-monospace,Menlo,Consolas,monospace;color:#9cc2ff}
+.sens .hd .btn.sm{padding:2px 7px}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.metric{background:var(--panel2);border:1px solid var(--line);border-radius:var(--r);padding:8px 10px}
+.metric .l{font-size:11.5px;color:var(--muted)}
+.metric .v{font-size:17px;font-weight:600;font-variant-numeric:tabular-nums}
+.events{font-size:12px;color:var(--muted);max-height:110px;overflow:auto;font-family:ui-monospace,Menlo,Consolas,monospace}
+main{position:relative;min-width:0;min-height:0;overflow:hidden;background:#0b0d11}
+#c3d{width:100%;height:100%;display:block;outline:none}
+.ov{position:absolute;pointer-events:none}
+#hud{left:12px;top:12px;background:rgba(10,12,16,.62);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:10px 12px;font:12px/1.5 ui-monospace,Menlo,Consolas,monospace;color:#dfe5ee;white-space:pre;min-width:250px;backdrop-filter:blur(3px)}
+#camBar{right:12px;top:54px;pointer-events:auto;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:60%}
+#camBar .btn{background:rgba(21,24,32,.85)}
+#status{left:50%;top:12px;transform:translateX(-50%);max-width:calc(100% - 300px);overflow:hidden;text-overflow:ellipsis;background:rgba(10,12,16,.7);border:1px solid rgba(255,255,255,.08);border-radius:999px;padding:6px 14px;font-size:13px;white-space:nowrap}
+#status b{color:#7fb0ff;font-weight:600}
+#plots{left:12px;bottom:12px;background:rgba(10,12,16,.72);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:6px}
+#pipLbl{right:12px;font:11.5px ui-monospace,Menlo,monospace;color:#cfe0ff;background:rgba(10,12,16,.7);padding:2px 8px;border-radius:4px}
+#flash{inset:0;border:4px solid var(--bad);opacity:0;transition:opacity .2s}
+#help{right:12px;bottom:12px;background:rgba(10,12,16,.82);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:10px 12px;font:12px/1.6 ui-monospace,Menlo,monospace;color:#dfe5ee;white-space:pre}
+kbd{background:#252b38;border:1px solid #394154;border-bottom-width:2px;border-radius:4px;padding:0 5px;font:11px ui-monospace,monospace}
+#toast{left:50%;bottom:20px;transform:translateX(-50%);background:#1f2633;border:1px solid var(--line);padding:8px 14px;border-radius:8px;opacity:0;transition:opacity .25s}
+#modalBg{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:10}
+#modal{width:min(860px,94vw);max-height:90vh;background:var(--panel);border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column}
+#modal .mh{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+#modal .mh h3{margin:0;font-size:16px;flex:1}
+#modal .mb{padding:14px 16px;overflow:auto;display:flex;flex-direction:column;gap:10px;min-height:0}
+#modal textarea{width:100%;height:340px;background:#0b0d11;color:#cfe0ff;border:1px solid var(--line);border-radius:8px;font:12px/1.45 ui-monospace,Menlo,monospace;padding:10px;resize:vertical}
+.tabs{display:flex;gap:6px}
+#loading{position:absolute;inset:0;display:grid;place-items:center;background:#0b0d11;color:var(--muted);font-size:14px;z-index:5}
+@media (max-width:1500px){.brand small{display:none}.step{padding:6px 8px}}
+@media (max-width:1360px){.step .lbl{display:none}}
+@media (max-width:1100px){.hright .pill,#styleSel{display:none}}
+@media (max-width:900px){#app{grid-template-columns:1fr;grid-template-rows:54px 46vh 1fr}aside{grid-row:3}main{grid-row:2}.step .lbl{display:none}#hud{font-size:10.5px;min-width:0}#help{display:none}}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="brand"><div class="logo">AC</div><div>WebDriveSim <small>· ROS 2 driving sim</small></div></div>
+    <nav class="steps" id="steps"></nav>
+    <div class="hright">
+      <span class="pill" id="rosPill">ROS offline</span>
+      <select id="styleSel" title="World style"><option value="toy">Style: Stylised</option><option value="ghost">Style: Ghost</option><option value="realistic">Style: Realistic</option></select>
+      <select id="quality" title="Rendering quality (like CARLA -quality-level)"><option value="low">Quality: Low</option><option value="medium" selected>Quality: Medium</option><option value="high">Quality: Epic</option></select>
+      <button class="btn" id="btnLoad" title="Load a saved scenario.json">Load</button>
+      <button class="btn pri" id="btnExport">Export world</button>
+      <input type="file" id="fileIn" accept=".json,application/json" hidden>
+    </div>
+  </header>
+  <aside>
+    <div id="stepBody"></div>
+    <footer><button class="btn" id="back">← Back</button><button class="btn pri" id="next">Next →</button></footer>
+  </aside>
+  <main>
+    <canvas id="c3d" tabindex="0"></canvas>
+    <div id="loading">Building the world…</div>
+    <div class="ov" id="flash"></div>
+    <div class="ov" id="hud"></div>
+    <div class="ov" id="status"></div>
+    <div class="ov" id="camBar"></div>
+    <div class="ov" id="plots"><canvas id="plotC" width="440" height="168"></canvas></div>
+    <div class="ov" id="pipLbl">/carla/ego_vehicle/rgb_front</div>
+    <div class="ov" id="help"></div>
+    <div class="ov" id="toast"></div>
+  </main>
+</div>
+<div id="modalBg"><div id="modal">
+  <div class="mh"><h3>Export world</h3><button class="btn sm" id="mClose">Close</button></div>
+  <div class="mb">
+    <div class="row" style="margin:0"><label style="flex:none">Package name</label><input type="text" id="pkgName" value="overtake_curvy_01" style="width:220px"><span style="flex:1"></span><button class="btn pri" id="dlZip">Download .zip</button><button class="btn" id="dlJson">Download .json</button></div>
+    <div class="note" style="margin:0">Put <b>&lt;name&gt;.json</b> into the <code>worlds/</code> folder of the WebDriveSim repository, then run <code>ros2 launch webdrivesim_bringup sim.launch.py world:=&lt;name&gt;.json</code>. The package also has <b>world.yaml</b> (same content for your nodes), <b>road.xodr</b> (OpenDRIVE 1.6 for CARLA, RoadRunner, esmini, MATLAB) and a README.</div>
+    <div class="tabs" id="mTabs"></div>
+    <textarea id="mText" readonly spellcheck="false"></textarea>
+    <div class="row" style="margin:0"><span id="mInfo" style="color:var(--muted);font-size:12px;flex:1"></span><button class="btn" id="mCopy">Copy</button></div>
+  </div>
+</div></div>
+<script>/*BUNDLE*/</script>
+</body>
+</html>

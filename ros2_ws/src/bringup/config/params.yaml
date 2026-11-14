@@ -1,0 +1,18 @@
+# Tuning values of our code. Units: SI (m, s, m/s, rad).
+# After a change:  ./scripts/restart.sh acc   (no rebuild needed)
+
+acc_node:                       # adaptive cruise control + lane keeping
+  ros__parameters:
+    odom_topic: /carla/ego_vehicle/odometry   # our car's position and speed (from the simulator)
+    v_set: 25.0                 # m/s cruise speed (90 km/h)
+    time_gap: 1.5               # s, distance to the car ahead = s0 + time_gap * speed
+    s0: 5.0                     # m, distance kept when stopped
+    k_v: 0.5                    # cruise gain
+    k_s: 0.25                   # gap gain
+    k_dv: 0.6                   # relative-speed gain
+    a_max: 2.5                  # m/s^2 comfortable acceleration
+    a_min: -8.0                 # m/s^2 strongest braking
+    lookahead_min: 6.0          # m, pure pursuit look-ahead at low speed
+    lookahead_gain: 0.6         # s, look-ahead = max(lookahead_min, lookahead_gain * speed)
+    wheelbase: 2.84             # m
+    delta_max: 0.60             # rad, wheel angle at steer = 1 (from the vehicle model of the simulator)

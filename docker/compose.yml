@@ -1,0 +1,70 @@
+# The containers of the project. All use the same image (acav:humble), built from ./Dockerfile.
+# The scripts start them by NAME, for example:  docker compose up -d webdrivesim acc dev
+# CARLA itself is not here: it runs directly on your PC (./scripts/carla.sh, see docs/CARLA.md).
+
+# ---------------------------------------------------------------------------------------------
+# Settings shared by every container. Each service below starts with "<<: *common",
+# which means: "copy all the settings of this block here".
+# ---------------------------------------------------------------------------------------------
+x-common: &common
+  image: acav:humble
+  pull_policy: never                # local image (scripts/build.sh): never try to download it from Docker Hub
+  build:
+    context: .
+    args:
+      CARLA_VERSION: ${CARLA_VERSION}
+      USER_UID: ${USER_UID}
+      USER_GID: ${USER_GID}
+  network_mode: host                # use your PC's network: ports and ROS topics work as usual
+  ipc: host                         # shared memory (faster ROS 2 messages, windows)
+  restart: on-failure               # if a module crashes, Docker restarts it
+  env_file: .env                    # every setting in .env is visible inside
+  environment:
+    DISPLAY: ${DISPLAY:-:0}         # open windows (RViz, keyboard driving) on your screen
+    SIM: ${SIM:-webdrivesim}           # which simulator is used (set by scripts/start.sh)
+    CARLA_CAMERAS: ${CARLA_CAMERAS:-false}  # from .env, unless a script overrides it
+    CARLA_RENDER: ${CARLA_RENDER:-true}     #   (drive_keyboard.sh needs both = true)
+    NVIDIA_VISIBLE_DEVICES: all     # NVIDIA only: use all cards, with all features incl. graphics.
+    NVIDIA_DRIVER_CAPABILITIES: all #   Ignored on PCs without NVIDIA, so they can stay.
+    # Laptop with Intel + NVIDIA (hybrid) and runtime: nvidia below? Remove the # on these two lines,
+    # so windows are drawn by the NVIDIA card instead of the Intel one:
+    # __NV_PRIME_RENDER_OFFLOAD: "1"
+    # __GLX_VENDOR_LIBRARY_NAME: nvidia
+  volumes:
+    - ..:/home/dev/acav             # the whole acav folder, live: edit on your PC, used inside
+    - /tmp/.X11-unix:/tmp/.X11-unix # the screen connection
+  # ----- GPU for windows opened from containers (RViz, Gazebo, keyboard driving) -----
+  # Intel/AMD integrated GPU (and also fine with NVIDIA): access to the GPU device files.
+  devices:
+    - /dev/dri:/dev/dri
+  group_add:                        # your PC's "video" and "render" group numbers (set by the scripts)
+    - ${VIDEO_GID}
+    - ${RENDER_GID}
+  # NVIDIA dedicated GPU, optional (needs the NVIDIA Container Toolkit, see docs/CARLA.md):
+  # remove the # on the next line. The NVIDIA driver is then taken from your PC: no Dockerfile change.
+  # runtime: nvidia
+
+services:
+  # ---------- simulator connections: start ONE ----------
+  webdrivesim:                      # our simulator: serves the web page + ROS link (ports in .env)
+    <<: *common
+    command: ros2 launch bringup webdrivesim.launch.py
+
+  carla_bridge:                     # link to CARLA (running on your PC): topics, our car, lane info
+    <<: *common
+    command: ros2 launch bringup carla.launch.py
+
+  # ---------- our code: the same for both simulators ----------
+  acc:                              # adaptive cruise control + lane keeping
+    <<: *common
+    command: ros2 launch bringup acc.launch.py
+
+  # ---------- tools ----------
+  foxglove:                         # web visualisation: https://app.foxglove.dev -> ws://localhost:8765
+    <<: *common
+    command: ros2 launch foxglove_bridge foxglove_bridge_launch.xml port:=${FOXGLOVE_PORT}
+
+  dev:                              # your terminal. It runs nothing: "sleep infinity" keeps it alive
+    <<: *common
+    restart: "no"
+    command: sleep infinity

@@ -1,0 +1,48 @@
+# ===== ROS 2 / colcon build products (./scripts/build.sh recreates them) =====
+build/
+install/
+log/
+
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+
+# ===== WebDriveSim web page (npm) =====
+node_modules/
+npm-debug.log*
+.npm/
+# web/dist/webdrivesim.html IS committed: it opens without Docker (see third_party/webdrivesim/README.md)
+
+# ===== Recordings and logs =====
+*.log
+*.db3
+*.mcap
+*.bag
+rosbag2_*/
+
+# ===== CARLA (lives outside the repo; never add the 16 GB package or its archives) =====
+CARLA_*/
+*.tar.gz
+core
+core.*
+
+# ===== Editors and OS =====
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# ===== Local settings =====
+docker/.env
+tests/
